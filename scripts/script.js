@@ -44,6 +44,9 @@ function dragStart(ev)
 }
 function dragEnter(ev)
 {
+	if(ev.target.closest(".piece"))
+    	ev.target.style.border = "3px solid red";
+    else
 	ev.target.style.border = "2px solid white";
 }
 function dragNoBorder(ev)
