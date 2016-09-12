@@ -33,15 +33,10 @@ function restart()
 	location.reload();
 }
 
-//Rotation pièce 90° quand dBclick
-//.style.transform = "rotate(90deg)";
-
-
-
 //Drag & Drop
-function allowDrop(piece)
+function allowDrop(ev)
 {
-    piece.preventDefault();
+    ev.preventDefault();
 }
 function dragStart(ev)
 {
@@ -101,6 +96,12 @@ function dropBox(ev)
     {
 	    ev.target.appendChild(document.getElementById(data));
     }
+}
+
+//Rotation pièce 90° quand dBclick
+function rotate()
+{
+//.style.transform = "rotate(90deg)";
 }
 
 /*--Return--*/
