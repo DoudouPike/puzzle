@@ -2,26 +2,24 @@ const PIECEXBOX = document.querySelector(".piecesBox");
 const PUZZLEBOX = document.querySelector(".puzzleBox");
 const PATTERN = document.querySelector(".pattern");
 const PUZZLE = document.querySelector(".puzzle");
-const PATTERNBUTTON = document.querySelector(".helpButton");
+const HELPBUTTON = document.querySelector(".helpButton");
 const RESTARTBUTTON = document.querySelector(".restartButton");
-
 var count;
 var piecesBoxTab;
 var piece, emplacement;
-
 var rowCount, emplacementCount;
 
 /*--Functions--*/
 //Help
-function showPuzzle()
+function help()
 {
 	PATTERN.classList.remove("hide");
 	PUZZLE.classList.add("hide");
-	PATTERNBUTTON.classList.add("hide");
+	HELPBUTTON.classList.add("hide");
 
 	setTimeout(function()
 	{
-		PATTERNBUTTON.classList.remove("hide");
+		HELPBUTTON.classList.remove("hide");
 		PATTERN.classList.add("hide");
 		PUZZLE.classList.remove("hide");
 	}, 1500);
@@ -32,11 +30,6 @@ function restart()
 {
 	location.reload();
 }
-
-//Rotation pièce 90° quand dBclick
-//.style.transform = "rotate(90deg)";
-
-
 
 //Drag & Drop
 function allowDrop(piece)
@@ -49,12 +42,19 @@ function dragStart(ev)
 }
 function dragEnter(ev)
 {
-	ev.target.style.border = "2px solid white";
+	if(ev.target.closest(".piece"))
+    	ev.target.style.border = "2px dashed black";
+    else
+		ev.target.style.border = "2px solid white";
 }
+
+//Condition victoire : Quand une pièce est bien placée, ou quand elles le sont toutes ?
 function dragNoBorder(ev)
 {
 	ev.target.style.border = "0";
 }
+//
+
 function dragBorder(ev)
 {
 	ev.target.style.border = "1px dashed black";
@@ -63,30 +63,20 @@ function dropPuzzle(ev)
 {
     ev.preventDefault();
     ev.target.style.border = "0";
-
-    var thisEmplacement = ev.target;
     var data = ev.dataTransfer.getData("text");
-
-    if(thisEmplacement.closest(".piece"))
+	
+    if(ev.target.closest(".piece"))
     {
     	//inverser les pièces
-    	var firstPiece = thisEmplacement.closest(".piece");
-    	var secondPiece = document.getElementById(data);
-    	var temp;
-
-    	temp = firstPiece;
-    	firstPiece = secondPiece;
-    	secondPiece = temp;
-
-    	console.log(firstPiece);
-    	console.log(secondPiece);
-
-    	thisEmplacement.replaceChild();
+    	var placedPiece = ev.target;
+    	var droppedPiece = document.getElementById(data);
+    	var placedPieceParent = placedPiece.parentNode;
+    	var droppedPieceParent = droppedPiece.parentNode;
+    	placedPieceParent.replaceChild(droppedPiece, placedPiece);
+    	droppedPieceParent.appendChild(placedPiece);
     }
     else
-    {
 	    ev.target.appendChild(document.getElementById(data));
-    }
 }
 function dropBox(ev)
 {
@@ -95,19 +85,22 @@ function dropBox(ev)
     
     if(ev.target.closest(".piece"))
     {
-    	console.log("déjà une pièce");
     	//inverser les pièces
+    	var placedPiece = ev.target;
+    	var droppedPiece = document.getElementById(data);
+    	var placedPieceParent = placedPiece.parentNode;
+    	var droppedPieceParent = droppedPiece.parentNode;
+    	placedPieceParent.replaceChild(droppedPiece, placedPiece);
+    	droppedPieceParent.appendChild(placedPiece);
     }
     else
-    {
 	    ev.target.appendChild(document.getElementById(data));
-    }
 }
 
 /*--Return--*/
-piecesBoxTab = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 
-//Boite de pièces
+//Boite Pièces
+piecesBoxTab = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 piecesBoxTab.sort(function()
 {
 	return Math.random() - 0.5;
@@ -119,18 +112,18 @@ while(count < piecesBoxTab.length)
 	piece = document.createElement("div");
 
 	piececontainer.classList.add("piececontainer");
-	piece.classList.add("piece");
-	piece.setAttribute("id", "piece" + piecesBoxTab[count]);
-	
 	piececontainer.setAttribute("ondragover","allowDrop(event)");
 	piececontainer.setAttribute("ondrop","dropBox(event)");
 	piececontainer.setAttribute("ondragend","dragBorder(event)");
 
+	piece.classList.add("piece");
+	piece.setAttribute("id", "piece" + piecesBoxTab[count]);
 	piece.setAttribute("draggable","true");
 	piece.setAttribute("ondragstart","dragStart(event)");
-
+	
 	PIECEXBOX.appendChild(piececontainer);
 	piececontainer.appendChild(piece);
+	
 	count++;
 }
 
@@ -148,7 +141,6 @@ while(rowCount <= 3)
 	{
 		emplacement = document.createElement("td");
 		emplacement.classList.add("emplacement");
-
 		emplacement.setAttribute("ondrop","dropPuzzle(event)");
 		emplacement.setAttribute("ondragover","allowDrop(event)");
 		emplacement.setAttribute("ondragend","dragNoBorder(event)");
@@ -160,9 +152,8 @@ while(rowCount <= 3)
 		emplacementCount++;
 	}
 
-
 	rowCount++;
 }
 
-PATTERNBUTTON.onclick = showPuzzle;
 RESTARTBUTTON.onclick = restart;
+HELPBUTTON.onclick = help;
