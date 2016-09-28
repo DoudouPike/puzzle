@@ -34,16 +34,14 @@ function restart()
 }
 
 //Rotation pièce 90° quand dBclick
-/*function rotate(ev)
-{
-	ev.target.style.transform = "rotate(90deg)"
-}
-*/
+//.style.transform = "rotate(90deg)";
+
+
 
 //Drag & Drop
-function allowDrop(ev)
+function allowDrop(piece)
 {
-    ev.preventDefault();
+    piece.preventDefault();
 }
 function dragStart(ev)
 {
@@ -64,13 +62,26 @@ function dragBorder(ev)
 function dropPuzzle(ev)
 {
     ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
     ev.target.style.border = "0";
-    
-    if(ev.target.closest(".piece"))
+
+    var thisEmplacement = ev.target;
+    var data = ev.dataTransfer.getData("text");
+
+    if(thisEmplacement.closest(".piece"))
     {
-    	console.log("déjà une pièce");
     	//inverser les pièces
+    	var firstPiece = thisEmplacement.closest(".piece");
+    	var secondPiece = document.getElementById(data);
+    	var temp;
+
+    	temp = firstPiece;
+    	firstPiece = secondPiece;
+    	secondPiece = temp;
+
+    	console.log(firstPiece);
+    	console.log(secondPiece);
+
+    	thisEmplacement.replaceChild();
     }
     else
     {
